@@ -71,8 +71,3 @@ def answer_question(question):
     response = llm.invoke(prompt_parts)      # call Gemini LLM
     return response                      # extract text
 
-# --- Test it ---
-question = "What is the paper about?"
-response=answer_question(question)
-print(response.content)
-print()
