@@ -2,10 +2,9 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from typing import List
 from io import BytesIO
 from fastapi.middleware.cors import CORSMiddleware
-
-from Ingestion import ingest_pdfs_to_vector_db
-from utils import answer_question
-from pydantic_models import QueryRequest, QueryResponse
+from Application.Ingestion import ingest_pdfs_to_vector_db
+from App.Retrieval import answer_question
+from .pydantic_models import QueryRequest, QueryResponse
 
 app = FastAPI()
 
