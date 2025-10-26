@@ -1,5 +1,4 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage
 from langchain_core.runnables import RunnableLambda, RunnablePassthrough
@@ -17,7 +16,7 @@ llm=ChatGoogleGenerativeAI(model="gemini-2.5-flash",api_key=GEMINI_API_KEY)
 
 # --- Retriever wrapper function ---
 def retriever_func(question):
-    from VectorDB import multi_retriever
+    from App.VectorDB import multi_retriever
     # Call the MultiVectorRetriever object, not the function itself
     docs = multi_retriever.invoke(question, kw_args={"k": 3})
     return docs  # return Document objects, not str()
@@ -59,7 +58,6 @@ chain = (
         "question": RunnablePassthrough(),
     }
     | RunnableLambda(build_prompt)
-    | llm
     | StrOutputParser()
 )
 
