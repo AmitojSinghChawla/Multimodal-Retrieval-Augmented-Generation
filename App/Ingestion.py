@@ -95,3 +95,4 @@ def process(tables,texts,images64):
     Process and return the segregated elements.
     """
     return table_summaries, text_summaries, image_summaries
+
