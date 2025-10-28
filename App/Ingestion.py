@@ -1,4 +1,6 @@
 import os
+
+from langchain_core.runnables import RunnableLambda
 from unstructured.partition.pdf import partition_pdf
 import dotenv
 
@@ -69,3 +71,27 @@ def get_images(all_elements):
     return images64
 
 
+
+def ingest(uploaded_files):
+    """
+    Complete ingestion pipeline for PDFs in a directory.
+    """
+    try:
+        elements = process_pdfs_in_directory(uploaded_files)
+        tables, texts = table_text_segregation(elements)
+        images64 = get_images(elements)
+        return tables, texts, images64
+
+    except Exception as e:
+        raise RuntimeError(f"Ingestion pipeline failed: {str(e)}")
+
+
+def process(tables,texts,images64):
+    from App.summarizer import summarize_texts_tables, summarize_images
+
+    table_summaries,text_summaries = summarize_texts_tables(texts,tables)
+    image_summaries = summarize_images(images64)
+    """
+    Process and return the segregated elements.
+    """
+    return table_summaries, text_summaries, image_summaries

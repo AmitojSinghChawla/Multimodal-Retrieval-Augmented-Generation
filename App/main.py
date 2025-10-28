@@ -1,8 +1,8 @@
-from .Ingestion import process_pdfs_in_directory, table_text_segregation, get_images
+from App.Ingestion import process_pdfs_in_directory, table_text_segregation, get_images
 import os
 from summarizer import summarize_texts_tables, summarize_images
-from .VectorDB import add_documents_to_vector_db
-from .Retrieval import answer_question
+from App.VectorDB import add_documents_to_vector_db
+from App.Retrieval import answer_question
 
 
 if __name__ == "__main__":
