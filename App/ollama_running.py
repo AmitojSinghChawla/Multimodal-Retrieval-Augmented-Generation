@@ -43,5 +43,4 @@ def ensure_ollama_running():
     print("🚀 Ollama started successfully.")
 
 # Usage
-if __name__ == "__main__":
-    ensure_ollama_running()
+

@@ -1,7 +1,12 @@
 import streamlit as st
-import requests
 import os
 import sys
+from App.ollama_running import ensure_ollama_running
+
+
+# Ensure Ollama is running
+ensure_ollama_running()
+
 
 # Add parent directory to Python path
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -9,8 +14,16 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 
-from App.Retrieval import answer_question
-from App.Ingestion import
+import shutil
+import tempfile
+
+# Create a temp directory for file uploads
+TEMP_DIR = os.path.join(tempfile.gettempdir(), "streamlit_ingestion_temp")
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+
+from App.retrieval_chain import answer_question
+from App.Ingestion_chain import ingestion_chain
 
 # Page config
 st.set_page_config(
@@ -68,32 +81,43 @@ if prompt is not None:
                 f"<b>Bot:</b> {answer}</div>",
                 unsafe_allow_html=True
             )
+    # USER FILE UPLOAD
 
+        for uploaded_file in getattr(prompt, "files", []):
+            file_path = os.path.join(TEMP_DIR, uploaded_file.name)
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.read())
 
-    for uploaded_file in getattr(prompt, "files", []):
-        with chat_container:
-            st.markdown(
-                f"<div style='background-color:#FFECB3; padding:10px; border-radius:10px; margin:5px 0; width:60%;'>"
-                f"<b>Uploaded file:</b> {uploaded_file.name}</div>",
-                unsafe_allow_html=True
-            )
-
-        # --- Send file(s) to FastAPI ---
-        with st.spinner(f"Ingesting {uploaded_file.name}..."):
-            files = [("files", (uploaded_file.name, uploaded_file.read(), "application/pdf"))]
-            response =
-
-        if response.status_code == 200:
             with chat_container:
                 st.markdown(
-                    f"<div style='background-color:#C8E6C9; padding:10px; border-radius:10px; margin:5px 0; width:60%;'>"
-                    f"✅ File {uploaded_file.name} ingested successfully.</div>",
+                    f"<div style='background-color:#FFECB3; padding:10px; border-radius:10px; margin:5px 0; width:60%;'>"
+                    f"<b>Uploaded file:</b> {uploaded_file.name}</div>",
                     unsafe_allow_html=True
                 )
-        else:
-            with chat_container:
-                st.markdown(
-                    f"<div style='background-color:#FFCDD2; padding:10px; border-radius:10px; margin:5px 0; width:60%;'>"
-                    f"❌ Error ingesting {uploaded_file.name}: {response.text}</div>",
-                    unsafe_allow_html=True
-                )
+
+            with st.spinner(f"Ingesting {uploaded_file.name}..."):
+                try:
+                    response = ingestion_chain([file_path])
+
+                    color = "#C8E6C9" if "Successfully" in response else "#FFCDD2"
+                    with chat_container:
+                        st.markdown(
+                            f"<div style='background-color:{color}; padding:10px; border-radius:10px; margin:5px 0; width:60%;'>"
+                            f"{response}</div>",
+                            unsafe_allow_html=True
+                        )
+
+                except Exception as e:
+                    with chat_container:
+                        st.markdown(
+                            f"<div style='background-color:#FFCDD2; padding:10px; border-radius:10px; margin:5px 0; width:60%;'>"
+                            f"❌ Unexpected error: {str(e)}</div>",
+                            unsafe_allow_html=True
+                        )
+
+import atexit
+
+@atexit.register
+def cleanup_temp_dir():
+    if os.path.exists(TEMP_DIR):
+        shutil.rmtree(TEMP_DIR, ignore_errors=True)
