@@ -63,8 +63,8 @@ def add_documents_to_vector_db(texts, text_summaries, tables, table_summaries, i
     # Add image summaries
     img_ids = [str(uuid.uuid4()) for _ in images]
     summary_img = [
-        Document(page_content=summary, metadata={id_key: img_ids[i]})
-        for i, summary in enumerate(img_summaries)
+        Document(page_content=summary, metadata={id_key: img_id})
+        for img_id, summary in zip(img_ids, img_summaries)
         if summary and summary.strip()
     ]
 

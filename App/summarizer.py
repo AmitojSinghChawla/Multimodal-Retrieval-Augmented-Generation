@@ -27,6 +27,7 @@ def summarize_texts_tables(texts, tables):
     return text_summaries, table_summaries
 
 def summarize_images(images64):
+    img_summaries = []
     # Prompt template
     prompt_text = """
     Describe the image in detail. For context,
@@ -44,3 +45,6 @@ def summarize_images(images64):
     img_summary_chain = prompt | model | StrOutputParser()
 
     image_summaries = img_summary_chain.invoke(images64)
+
+    return image_summaries
+

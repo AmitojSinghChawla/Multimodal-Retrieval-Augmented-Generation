@@ -1,9 +1,16 @@
 import streamlit as st
 import requests
-import io
+import os
+import sys
 
-# Backend endpoint
-FASTAPI_URL = "http://127.0.0.1:8000"
+# Add parent directory to Python path
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
+
+from App.Retrieval import answer_question
+from App.Ingestion import
 
 # Page config
 st.set_page_config(
@@ -38,8 +45,8 @@ prompt = st.chat_input(
     file_type="pdf"
 )
 
-# --- Chat messages ---
 if prompt is not None:
+
     # USER TEXT MESSAGE
     if getattr(prompt, "text", ""):
         user_msg = prompt.text
@@ -52,25 +59,17 @@ if prompt is not None:
 
         # --- Send text query to FastAPI ---
         with st.spinner("Thinking..."):
-            response = requests.post(f"{FASTAPI_URL}/ask", json={"query": user_msg})
+            answer = answer_question(user_msg)
+        if isinstance(answer, dict) and "answer" in answer:
+            answer = answer["answer"]
+        with chat_container:
+            st.markdown(
+                f"<div style='background-color:#E8EAF6; padding:10px; border-radius:10px; margin:5px 0; width:60%;'>"
+                f"<b>Bot:</b> {answer}</div>",
+                unsafe_allow_html=True
+            )
 
-        if response.status_code == 200:
-            answer = response.json().get("answer", "No answer received.")
-            with chat_container:
-                st.markdown(
-                    f"<div style='background-color:#E8EAF6; padding:10px; border-radius:10px; margin:5px 0; width:60%;'>"
-                    f"<b>Bot:</b> {answer}</div>",
-                    unsafe_allow_html=True
-                )
-        else:
-            with chat_container:
-                st.markdown(
-                    f"<div style='background-color:#FFCDD2; padding:10px; border-radius:10px; margin:5px 0; width:60%;'>"
-                    f"<b>Error:</b> {response.text}</div>",
-                    unsafe_allow_html=True
-                )
 
-    # USER FILE UPLOAD
     for uploaded_file in getattr(prompt, "files", []):
         with chat_container:
             st.markdown(
@@ -82,7 +81,7 @@ if prompt is not None:
         # --- Send file(s) to FastAPI ---
         with st.spinner(f"Ingesting {uploaded_file.name}..."):
             files = [("files", (uploaded_file.name, uploaded_file.read(), "application/pdf"))]
-            response = requests.post(f"{FASTAPI_URL}/ingest", files=files)
+            response =
 
         if response.status_code == 200:
             with chat_container:
