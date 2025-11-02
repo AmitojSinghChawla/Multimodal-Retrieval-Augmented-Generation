@@ -1,8 +1,8 @@
 import uuid
 from langchain_chroma import Chroma
-from langchain.storage import InMemoryStore
-from langchain.schema.document import Document
-from langchain.retrievers.multi_vector import MultiVectorRetriever
+from langchain_core.stores import InMemoryStore
+from langchain_core.documents import Document
+from langchain_classic.retrievers import MultiVectorRetriever
 import torch
 from langchain_huggingface import HuggingFaceEmbeddings
 
@@ -25,7 +25,7 @@ multi_retriever = MultiVectorRetriever(
 def add_documents_to_vector_db(texts, text_summaries, tables, table_summaries, images, img_summaries): # Function to add documents and their summaries to the vector database
 
     import uuid
-    from langchain.schema import Document
+    from langchain_core.documents import Document
 
     # Loops over each text item in the extracted texts and creates a unique ID for each
     doc_ids = [str(uuid.uuid4()) for _ in texts]

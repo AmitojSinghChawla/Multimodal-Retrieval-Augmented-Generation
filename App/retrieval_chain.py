@@ -3,12 +3,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
 import os
+from Retrieval import llm
 
-
-load_dotenv()
-GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY")
-
-llm=ChatGoogleGenerativeAI(model="gemini-2.5-flash",api_key=GEMINI_API_KEY)
 
 def answer_question(question):
     # Optional: handle greetings quickly

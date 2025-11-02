@@ -5,7 +5,12 @@ from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from base64 import b64decode
 from dotenv import load_dotenv
 import os
+load_dotenv()
 
+GEMINI_API_KEY=os.getenv("GOOGLE_API_KEY")
+
+
+llm=ChatGoogleGenerativeAI(model="gemini-2.5-flash",api_key=GEMINI_API_KEY)
 
 
 # --- Retriever wrapper function ---
@@ -31,7 +36,7 @@ def parse_docs(docs):
         try:
             b64decode(text_str)
             images.append(text_str)
-        except Exception:
+        except Exception as e:
             texts.append(text_str)
     return {"images": images, "texts": texts}
 
@@ -45,13 +50,24 @@ Question: {question}
 """
     return [HumanMessage(content=prompt)]
 
-# --- Build the LangChain chain ---
-chain = (
-    {
-        "context": retriever_func | RunnableLambda(parse_docs),  # pass function, not called
-        "question": RunnablePassthrough(),
-    }
-    | RunnableLambda(build_prompt)
-    | StrOutputParser()
-)
 
+# --- Complete retrieval chain ---
+def retrieval_chain(question):
+    try:
+        # Step 1: Retrieve relevant documents
+        docs = retriever_func(question)
+
+        # Step 2: Parse documents into texts and images
+        context = parse_docs(docs)
+
+        # Step 3: Build prompt for Gemini
+        messages = build_prompt(context, question)
+
+        # Step 4: Get answer from Gemini
+        response = llm.generate_messages([messages], max_tokens=500)
+        answer = response.generations[0][0].message.content
+
+        return answer
+
+    except Exception as e:
+        raise RuntimeError(f"Retrieval chain failed: {str(e)}")
