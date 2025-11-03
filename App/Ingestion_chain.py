@@ -1,22 +1,36 @@
-from App.Ingestion import ingest,process
-from App.VectorDB import add_documents_to_vector_db
+from Ingestion import process_pdf_input, table_text_segregation, get_images
+from summarizer import summarize_texts_tables, summarize_images
+from VectorDB import add_documents_to_vector_db
 
 
-def ingestion_chain(uploaded_files):
+def ingestion_chain(file_path, retriever):
     """
-    Complete ingestion chain: ingest files, process them, and add to vector DB.
+    Complete ingestion pipeline: PDF → extract → summarize → add to vector DB.
     """
     try:
-        # Ingest files to get segregated elements
-        tables, texts, images64 = ingest(uploaded_files)
+        # Extract elements from PDF
+        elements = process_pdf_input(file_path)
+        print(f"✅ Extracted {len(elements)} elements from PDF.")
 
-        # Process elements to get summaries
-        table_summaries, text_summaries, img_summaries = process(tables, texts, images64)
+        # Segregate into tables, texts, images
+        tables, texts = table_text_segregation(elements)
+        images = get_images(elements)
+        print(f"📄 Texts: {len(texts)}, 📊 Tables: {len(tables)}, 🖼️ Images: {len(images)}")
 
-        # Add documents and their summaries to the vector database
-        add_documents_to_vector_db(texts, text_summaries, tables, table_summaries, images64, img_summaries)
+        # Summarize
+        table_summaries, text_summaries = summarize_texts_tables(texts, tables)
+        img_summaries = summarize_images(images)
+        print(f"✅ Summarization complete.")
 
-        return f"Successfully ingested {len(texts)} texts, {len(tables)} tables, and {len(images64)} images."
+        # Add to vector DB
+        add_documents_to_vector_db(
+            texts, text_summaries, tables, table_summaries, images, img_summaries,
+            retriever=retriever
+        )
+        print(f"✅ Documents added to vector database.")
+
+        return True
 
     except Exception as e:
-        raise RuntimeError(f"Ingestion chain failed: {str(e)}")
+        print(f"❌ Error in ingestion pipeline: {str(e)}")
+        raise RuntimeError(f"Ingestion failed: {str(e)}")

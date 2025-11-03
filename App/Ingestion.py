@@ -1,13 +1,7 @@
 import os
-
-from langchain_core.runnables import RunnableLambda
 from unstructured.partition.pdf import partition_pdf
-import dotenv
-
-dotenv.load_dotenv()
 
 
-# --- PDF processing ---
 def create_chunks_from_pdf(file_path):
     """
     Partition a single PDF into structured elements.
@@ -26,24 +20,45 @@ def create_chunks_from_pdf(file_path):
     return elements
 
 
-def process_pdfs_in_directory(uploaded_files):
+def process_pdfs_in_directory(directory_path):
     """
     Process all PDFs in a directory and return all elements.
     """
     all_elements = []
-
-    for filename in os.listdir(uploaded_files):
+    for filename in os.listdir(directory_path):
         if filename.lower().endswith(".pdf"):
-            file_path = os.path.join(uploaded_files, filename)
+            file_path = os.path.join(directory_path, filename)
             elements = create_chunks_from_pdf(file_path)
             all_elements.extend(elements)
+    return all_elements
+
+
+def process_pdf_input(input_path):
+    """
+    Process either a single PDF file or all PDFs in a directory.
+    """
+    all_elements = []
+
+    if os.path.isfile(input_path):
+        if input_path.lower().endswith(".pdf"):
+            elements = create_chunks_from_pdf(input_path)
+            all_elements.extend(elements)
+        else:
+            raise ValueError(f"File {input_path} is not a PDF")
+    elif os.path.isdir(input_path):
+        all_elements = process_pdfs_in_directory(input_path)
+    else:
+        raise ValueError(f"Path {input_path} is neither a file nor a directory")
 
     return all_elements
 
 
-# --- Segregate elements ---
 def table_text_segregation(all_elements):
-    tables, texts = [], []
+    """
+    Segregate elements into tables and texts.
+    """
+    tables = []
+    texts = []
 
     for el in all_elements:
         el_type = str(type(el))
@@ -55,44 +70,15 @@ def table_text_segregation(all_elements):
     return tables, texts
 
 
-def get_images(all_elements):
+def get_images(elements):
     """
-    Extract images from CompositeElements as base64 or objects as needed.
+    Extract images from CompositeElements.
     """
     images64 = []
-
-    for el in all_elements:
+    for el in elements:
         if "CompositeElement" in str(type(el)):
             orig_elements = getattr(el.metadata, "orig_elements", []) or []
             for img_el in orig_elements:
                 if "Image" in str(type(img_el)):
                     images64.append(img_el)
-
     return images64
-
-
-
-def ingest(uploaded_files):
-    """
-    Complete ingestion pipeline for PDFs in a directory.
-    """
-    try:
-        elements = process_pdfs_in_directory(uploaded_files)
-        tables, texts = table_text_segregation(elements)
-        images64 = get_images(elements)
-        return tables, texts, images64
-
-    except Exception as e:
-        raise RuntimeError(f"Ingestion pipeline failed: {str(e)}")
-
-
-def process(tables,texts,images64):
-    from App.summarizer import summarize_texts_tables, summarize_images
-
-    table_summaries,text_summaries = summarize_texts_tables(texts,tables)
-    image_summaries = summarize_images(images64)
-    """
-    Process and return the segregated elements.
-    """
-    return table_summaries, text_summaries, image_summaries
-
