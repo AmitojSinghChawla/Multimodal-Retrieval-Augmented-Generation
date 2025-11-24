@@ -22,6 +22,7 @@ def ingestion_chain(file_path, retriever):
         img_summaries = summarize_images(images)
         print(f"✅ Summarization complete.")
 
+
         # Add to vector DB
         add_documents_to_vector_db(
             texts, text_summaries, tables, table_summaries, images, img_summaries,
