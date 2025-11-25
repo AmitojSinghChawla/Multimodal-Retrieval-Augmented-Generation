@@ -6,13 +6,3 @@ __pycache__/
 
 
 
->>>>>>> 196e6167f54456da83b27d8dcf9ad4415b4e71d9
-
-if __name__ == "__main__":
-    print("This is a .gitignore file and cannot be executed as a script.")# Ignore Python bytecode files
-
-<<<<<<< HEAD
-=======
-
-.env
->>>>>>> 196e6167f54456da83b27d8dcf9ad4415b4e71d9
