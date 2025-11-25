@@ -3,5 +3,9 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.12 (RetrivalAugmentedGeneration)" />
   </component>
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (Multimodal-Retrieval-Augmented-Generation)" project-jdk-type="Python SDK" />
+=======
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (Multimodal-Retrieval-Augmented-Generation)" project-jdk-type="Python SDK" />
+>>>>>>> 196e6167f54456da83b27d8dcf9ad4415b4e71d9
 </project>

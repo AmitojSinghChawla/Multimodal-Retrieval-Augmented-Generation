@@ -3,6 +3,12 @@ import shutil
 import atexit
 from prettytable import PrettyTable
 
+<<<<<<< HEAD
+=======
+from Ingestion_chain import ingestion_chain
+from retrieval_chain import answer_question
+from VectorDB import initialize_vector_db
+>>>>>>> 196e6167f54456da83b27d8dcf9ad4415b4e71d9
 
 # ===== CONFIG =====
 VECTOR_DB_DIR = os.getenv("VECTOR_DB_DIR", r"D:\Projects\Multimodal-Retrieval-Augmented-Generation\chroma_store")
@@ -13,7 +19,10 @@ retriever = None
 
 
 def initialize_retriever():
+<<<<<<< HEAD
     from App.VectorDB import initialize_vector_db
+=======
+>>>>>>> 196e6167f54456da83b27d8dcf9ad4415b4e71d9
     """Initialize the vector database retriever once."""
     global retriever
     if retriever is None:
@@ -63,7 +72,10 @@ def display_menu():
 
 
 def run_ingestion():
+<<<<<<< HEAD
     from App.Ingestion_chain import ingestion_chain
+=======
+>>>>>>> 196e6167f54456da83b27d8dcf9ad4415b4e71d9
     """Run ingestion from the configured data directory or user-provided path."""
     print(f"\n📂 Default data directory: {DATA_DIR}")
     use_default = input("Use default directory? (y/n): ").strip().lower()
@@ -87,7 +99,10 @@ def run_ingestion():
 
 
 def run_chat():
+<<<<<<< HEAD
     from App.retrieval_chain import answer_question
+=======
+>>>>>>> 196e6167f54456da83b27d8dcf9ad4415b4e71d9
     """Interactive chat loop with the RAG system."""
     ret = initialize_retriever()
 
