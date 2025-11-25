@@ -1,13 +1,16 @@
-from Ingestion import process_pdf_input, table_text_segregation, get_images
-from summarizer import summarize_texts_tables, summarize_images
-from VectorDB import add_documents_to_vector_db
-
-
 def ingestion_chain(file_path, retriever):
+    from Ingestion import process_pdf_input, table_text_segregation, get_images
+    from summarizer import summarize_texts_tables, summarize_images
+    from VectorDB import add_documents_to_vector_db
     """
     Complete ingestion pipeline: PDF → extract → summarize → add to vector DB.
     """
     try:
+
+        from App.ollama_running import ensure_ollama_running
+        ensure_ollama_running()
+
+
         # Extract elements from PDF
         elements = process_pdf_input(file_path)
         print(f"✅ Extracted {len(elements)} elements from PDF.")

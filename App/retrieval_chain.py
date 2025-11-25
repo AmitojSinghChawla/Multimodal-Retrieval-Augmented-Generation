@@ -9,7 +9,8 @@ load_dotenv()
 
 # Initialize Gemini model
 GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY")
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", api_key=GEMINI_API_KEY)
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=GEMINI_API_KEY)
+
 
 
 def parse_docs(docs):

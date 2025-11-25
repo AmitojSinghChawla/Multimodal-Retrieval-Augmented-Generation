@@ -1,9 +1,7 @@
-
-
-
+__pycache__/
+# Ignore environment variable files
+.env
 
 if __name__ == "__main__":
     print("This is a .gitignore file and cannot be executed as a script.")# Ignore Python bytecode files
 
-
-.env
