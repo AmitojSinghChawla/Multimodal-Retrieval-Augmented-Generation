@@ -10,14 +10,20 @@ from retrieval_chain import answer_question
 from VectorDB import initialize_vector_db
 
 # Page configuration
-st.set_page_config(page_title="RAG Chatbot", layout="wide")
+st.set_page_config(
+    page_title="QueryDr: A Retrieval-Augmented Generation System for Intelligent Document-Based Question Answering",
+    layout="wide",
+)
 
 # Initialize session state
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
-    st.session_state.temp_dir = os.path.join(tempfile.gettempdir(),
-                                             f"streamlit_rag_session_{st.session_state.session_id}")
-    st.session_state.chroma_dir = os.path.join(st.session_state.temp_dir, "chroma_store")
+    st.session_state.temp_dir = os.path.join(
+        tempfile.gettempdir(), f"streamlit_rag_session_{st.session_state.session_id}"
+    )
+    st.session_state.chroma_dir = os.path.join(
+        st.session_state.temp_dir, "chroma_store"
+    )
     st.session_state.messages = []
     st.session_state.files_uploaded = False
     st.session_state.retriever = None
@@ -39,7 +45,9 @@ def cleanup():
 
 # Sidebar
 with st.sidebar:
-    st.title("🤖 RAG Chatbot")
+    st.title(
+        "🤖 QueryDr: A Retrieval-Augmented Generation System for Intelligent Document-Based Question Answering"
+    )
     st.markdown("---")
     st.markdown("### 📋 Instructions")
     st.markdown("""
@@ -55,7 +63,7 @@ with st.sidebar:
         "Upload PDF files",
         type=["pdf"],
         accept_multiple_files=True,
-        help="Upload one or more PDF files to create your knowledge base"
+        help="Upload one or more PDF files to create your knowledge base",
     )
 
     if uploaded_files and not st.session_state.files_uploaded:
@@ -66,7 +74,9 @@ with st.sidebar:
 
                 for uploaded_file in uploaded_files:
                     try:
-                        file_path = os.path.join(st.session_state.temp_dir, uploaded_file.name)
+                        file_path = os.path.join(
+                            st.session_state.temp_dir, uploaded_file.name
+                        )
                         with open(file_path, "wb") as f:
                             f.write(uploaded_file.getbuffer())
 
@@ -80,10 +90,12 @@ with st.sidebar:
                 if success_count > 0:
                     st.success(f"✅ Successfully processed {success_count} file(s)!")
                     st.session_state.files_uploaded = True
-                    st.session_state.messages.append({
-                        "role": "system",
-                        "content": f"Successfully processed {success_count} PDF file(s). You can now ask questions about your documents."
-                    })
+                    st.session_state.messages.append(
+                        {
+                            "role": "system",
+                            "content": f"Successfully processed {success_count} PDF file(s). You can now ask questions about your documents.",
+                        }
+                    )
                     st.rerun()
 
                 if error_count > 0:
@@ -99,7 +111,10 @@ with st.sidebar:
             st.rerun()
 
 # Main content
-st.markdown("<h1 style='text-align: center;'>🤖 RAG Chatbot</h1>", unsafe_allow_html=True)
+st.markdown(
+    "<h1 style='text-align: center;'>🤖 QueryDr: A Retrieval-Augmented Generation System for Intelligent Document-Based Question Answering</h1>",
+    unsafe_allow_html=True,
+)
 st.markdown("---")
 
 # Display chat messages
@@ -115,21 +130,21 @@ with chat_container:
                 f"""<div style='background-color: #FFECB3; padding: 15px; border-radius: 10px; margin: 10px 0;'>
                 <p style='margin: 0; color: #333;'><strong>ℹ️ System:</strong> {content}</p>
                 </div>""",
-                unsafe_allow_html=True
+                unsafe_allow_html=True,
             )
         elif role == "user":
             st.markdown(
                 f"""<div style='background-color: #DCF8C6; padding: 15px; border-radius: 10px; margin: 10px 0; margin-left: 20%;'>
                 <p style='margin: 0; color: #333;'><strong>You:</strong> {content}</p>
                 </div>""",
-                unsafe_allow_html=True
+                unsafe_allow_html=True,
             )
         elif role == "assistant":
             st.markdown(
                 f"""<div style='background-color: #E8EAF6; padding: 15px; border-radius: 10px; margin: 10px 0; margin-right: 20%;'>
                 <p style='margin: 0; color: #333;'><strong>🤖 Bot:</strong> {content}</p>
                 </div>""",
-                unsafe_allow_html=True
+                unsafe_allow_html=True,
             )
 
 # Chat input
@@ -146,8 +161,12 @@ if st.session_state.files_uploaded:
             st.session_state.messages.append({"role": "assistant", "content": answer})
         except Exception as e:
             error_message = f"Sorry, I encountered an error: {str(e)}"
-            st.session_state.messages.append({"role": "assistant", "content": error_message})
+            st.session_state.messages.append(
+                {"role": "assistant", "content": error_message}
+            )
 
         st.rerun()
 else:
-    st.info("👆 Please upload and process PDF files from the sidebar to start chatting.")
+    st.info(
+        "👆 Please upload and process PDF files from the sidebar to start chatting."
+    )

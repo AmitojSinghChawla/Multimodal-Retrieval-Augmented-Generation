@@ -1,6 +1,7 @@
 import subprocess
 import platform
 
+
 def ensure_ollama_running():
     try:
         # Check if Ollama is running

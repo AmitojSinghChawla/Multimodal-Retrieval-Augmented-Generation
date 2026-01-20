@@ -7,7 +7,9 @@ def create_temp_directory(session_id):
     """
     Create a temporary directory for the session.
     """
-    temp_dir = os.path.join(tempfile.gettempdir(), f"streamlit_rag_session_{session_id}")
+    temp_dir = os.path.join(
+        tempfile.gettempdir(), f"streamlit_rag_session_{session_id}"
+    )
     chroma_dir = os.path.join(temp_dir, "chroma_store")
 
     os.makedirs(temp_dir, exist_ok=True)

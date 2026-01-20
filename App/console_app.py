@@ -8,8 +8,13 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(ROOT))
 
 # ===== CONFIG =====
-VECTOR_DB_DIR = os.getenv("VECTOR_DB_DIR", r"D:\Projects\Multimodal-Retrieval-Augmented-Generation\chroma_store")
-DATA_DIR = os.getenv("DATA_DIR", r"D:\Projects\Multimodal-Retrieval-Augmented-Generation\uploaded_pdfs")
+VECTOR_DB_DIR = os.getenv(
+    "VECTOR_DB_DIR",
+    r"D:\Projects\Multimodal-Retrieval-Augmented-Generation\chroma_store",
+)
+DATA_DIR = os.getenv(
+    "DATA_DIR", r"D:\Projects\Multimodal-Retrieval-Augmented-Generation\uploaded_pdfs"
+)
 
 # ===== GLOBAL STATE =====
 retriever = None
@@ -42,23 +47,19 @@ def display_menu():
     """Display the main menu using PrettyTable."""
     table = PrettyTable()
     table.field_names = ["Function", "Description", "Command"]
-    table.add_row([
-        "Ingest Files",
-        "Process and add files to the vector database.",
-        "1"
-    ])
+    table.add_row(
+        ["Ingest Files", "Process and add files to the vector database.", "1"]
+    )
     table.add_divider()
-    table.add_row([
-        "Chat with Documents",
-        "Ask questions and retrieve answers from ingested content.",
-        "2"
-    ])
+    table.add_row(
+        [
+            "Chat with Documents",
+            "Ask questions and retrieve answers from ingested content.",
+            "2",
+        ]
+    )
     table.add_divider()
-    table.add_row([
-        "Exit",
-        "End the session and delete vector database.",
-        "3"
-    ])
+    table.add_row(["Exit", "End the session and delete vector database.", "3"])
 
     print("\n" + "=" * 70)
     print("🤖 RAG Chatbot - Console Interface")
@@ -73,7 +74,7 @@ def run_ingestion():
     print(f"\n📂 Default data directory: {DATA_DIR}")
     use_default = input("Use default directory? (y/n): ").strip().lower()
 
-    if use_default == 'y':
+    if use_default == "y":
         data_path = DATA_DIR
     else:
         data_path = input("Enter PDF file or directory path: ").strip()

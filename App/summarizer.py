@@ -21,12 +21,16 @@ Input: {element}
 
     # Summarize texts
     raw_text_summaries = summarize_chain.batch(texts, {"max_concurrency": 3})
-    text_summaries = [s if isinstance(s, str) else s.content for s in raw_text_summaries]
+    text_summaries = [
+        s if isinstance(s, str) else s.content for s in raw_text_summaries
+    ]
 
     # Summarize tables
     tables_html = [table.metadata.text_as_html for table in tables]
     raw_table_summaries = summarize_chain.batch(tables_html, {"max_concurrency": 3})
-    table_summaries = [s if isinstance(s, str) else s.content for s in raw_table_summaries]
+    table_summaries = [
+        s if isinstance(s, str) else s.content for s in raw_table_summaries
+    ]
 
     return text_summaries, table_summaries
 
@@ -49,15 +53,10 @@ def summarize_images(images_b64):
                 "content": [
                     {
                         "type": "text",
-                        "text": "Describe this image accurately, in technical detail."
+                        "text": "Describe this image accurately, in technical detail.",
                     },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": data_url
-                        }
-                    }
-                ]
+                    {"type": "image_url", "image_url": {"url": data_url}},
+                ],
             }
         ]
 
